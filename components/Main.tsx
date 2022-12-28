@@ -37,14 +37,14 @@ const tokens = [
 export default function Home() {
   const [smartAccount, setSmartAccount] = useState<SmartAccount | null>(null)
   const [interval, enableInterval] = useState<boolean>(false)
-  const sdkRef = useRef<SocialLogin>()
+  const sdkRef = useRef<SocialLogin | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
   // Forwarder config
-  const [recipientAddress, setRecipientAddress] = useState('')
   const [amount, setAmount] = useState<string>('')
   const [balances, setBalances] = useState<IBalances[]>([])
   const [gasToken, setGasToken] = useState<IBalances | null>()
+  const [recipientAddress, setRecipientAddress] = useState<string>('')
   const [selectedToken, setSelectedToken] = useState(tokens[0])
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function Home() {
           setupSmartAccount()
           clearInterval(configureLogin)
         }
-      }, 1000);
+      }, 1000)
     }
   }, [interval])
 
@@ -76,16 +76,16 @@ export default function Home() {
 
   async function setupSmartAccount() {
     if (!sdkRef?.current?.provider) return
+    sdkRef.current.hideWallet()
     setLoading(true)
     const web3Provider = new ethers.providers.Web3Provider(
       sdkRef.current.provider
     )
-    sdkRef.current.hideWallet()
     try {
       const smartAccount = new SmartAccount(web3Provider, {
         activeNetworkId: ChainId.POLYGON_MAINNET,
         supportedNetworksIds: [ChainId.POLYGON_MAINNET],
-      });
+      })
       await smartAccount.init()
       setSmartAccount(smartAccount)
       setLoading(false)
@@ -118,7 +118,7 @@ export default function Home() {
     console.log('smartAccount: ', smartAccount)
     /* use getAlltokenBalances and getTotalBalanceInUsd query the smartAccount */
     const balFromSdk = await smartAccount.getAlltokenBalances(balanceParams)
-    console.log("balFromSdk::: ", balFromSdk)
+    console.log('balFromSdk::: ', balFromSdk)
     const usdBalFromSdk = await smartAccount.getTotalBalanceInUsd(balanceParams)
     console.log('usdBalFromSdk: ', usdBalFromSdk)
     setBalances(balFromSdk.data)
@@ -224,7 +224,7 @@ export default function Home() {
             <div className={formContainerStyle}>
               <input
                 value={recipientAddress}
-                placeholder="recipient address's"
+                placeholder='recipient address's'
                 onChange={e => setRecipientAddress(e.target.value)}
                 className={inputStyle}
               />
