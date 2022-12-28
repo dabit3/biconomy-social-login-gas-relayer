@@ -224,7 +224,7 @@ export default function Home() {
             <div className={formContainerStyle}>
               <input
                 value={recipientAddress}
-                placeholder='recipient address's'
+                placeholder="recipient's address"
                 onChange={e => setRecipientAddress(e.target.value)}
                 className={inputStyle}
               />
